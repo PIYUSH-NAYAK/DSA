@@ -80,41 +80,70 @@ void printVec(const vi &ans) {
     cout << endl;
 }
 
-// Lambda Function for Prime Check
 auto isPrime = [](int n) {
     if (n <= 1) return false;
-    for (int i = 2; i * i <= n; ++i) {
+    for (int i = 2; i * i <= n; ++i)
         if (n % i == 0) return false;
-    }
     return true;
 };
 
 int powerOf2(int n) { 
-    if (n <= 0) return -1;  // Return -1 for non-positive numbers
-    int power = log2(n);    // log2(n) gives the exponent of the nearest power of 2
-    return power;
+    if (n <= 0) return -1;
+    return log2(n);
 }
 
 int highestDivisor(int n) {
-    if (n <= 1) return 0;  // No divisor for 1 or below
-    int maxDivisor = 1;
+    if (n <= 1) return 0;
+    int maxDiv = 1;
     for (int i = 1; i * i <= n; ++i) {
-        if (n % i == 0) {  // If i is a divisor
-            maxDivisor = std::max(maxDivisor, i);  // Update max divisor found
-            if (i != n / i && n / i < n) {  // Check the pair divisor
-                maxDivisor = std::max(maxDivisor, n / i);
+        if (n % i == 0) {
+            maxDiv = max(maxDiv, i);
+            if (i != n / i && n / i < n) {
+                maxDiv = max(maxDiv, n / i);
             }
         }
     }
-    return maxDivisor;
+    return maxDiv;
 }
 
 //-------------------- Solve Function ------------------------//
 void solve() {
-    int t;
-    cin >> t;
-    while (t--) {
-        // Your code here
+    int T;
+    cin >> T;
+    while (T--) {
+        int n;
+        string s;
+        cin >> n >> s;
+
+        vector<bool> seen_before(n, false);
+        vector<bool> seen_after(n, false);
+        vector<int> last(26, -1);
+
+        for (int i = 0; i < n; i++) {
+            int c = s[i] - 'a';
+            if (last[c] != -1) 
+                seen_before[i] = true;
+            last[c] = i;
+        }
+
+        fill(last.begin(), last.end(), -1);
+
+        for (int i = n - 1; i >= 0; i--) {
+            int c = s[i] - 'a';
+            if (last[c] != -1)
+                seen_after[i] = true;
+            last[c] = i;
+        }
+
+        bool ok = false;
+        for (int i = 1; i <= n - 2; i++) {
+            if (seen_before[i] || seen_after[i]) {
+                ok = true;
+                break;
+            }
+        }
+
+        cout << (ok ? "Yes\n" : "No\n");
     }
 }
 

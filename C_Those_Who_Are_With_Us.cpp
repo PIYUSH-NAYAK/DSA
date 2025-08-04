@@ -38,7 +38,7 @@ using namespace std;
 //----------------------- Constants --------------------------//
 const int MOD = 1e9 + 7;
 
-//--------------------- Utility Functions --------------------//
+//------------------ Utility Functions (existing) ------------------//
 template <typename T>
 void inline read(T &x) {
     int f = 1;
@@ -90,18 +90,18 @@ auto isPrime = [](int n) {
 };
 
 int powerOf2(int n) { 
-    if (n <= 0) return -1;  // Return -1 for non-positive numbers
-    int power = log2(n);    // log2(n) gives the exponent of the nearest power of 2
+    if (n <= 0) return -1;
+    int power = log2(n);
     return power;
 }
 
 int highestDivisor(int n) {
-    if (n <= 1) return 0;  // No divisor for 1 or below
+    if (n <= 1) return 0;
     int maxDivisor = 1;
     for (int i = 1; i * i <= n; ++i) {
-        if (n % i == 0) {  // If i is a divisor
-            maxDivisor = std::max(maxDivisor, i);  // Update max divisor found
-            if (i != n / i && n / i < n) {  // Check the pair divisor
+        if (n % i == 0) {
+            maxDivisor = std::max(maxDivisor, i);
+            if (i != n / i && n / i < n) {
                 maxDivisor = std::max(maxDivisor, n / i);
             }
         }
@@ -109,12 +109,82 @@ int highestDivisor(int n) {
     return maxDivisor;
 }
 
+//------------------ New Modular Functions ------------------//
+
+vector<vector<int>> readMatrix(int n, int m) {
+    vector<vector<int>> a(n, vector<int>(m));
+    rep(i, 0, n) rep(j, 0, m) cin >> a[i][j];
+    return a;
+}
+
+pii findTopTwo(const vector<vector<int>>& a) {
+    int G = 0, H = 0;
+    for (const auto& row : a) {
+        for (int val : row) {
+            if (val > G) {
+                H = G;
+                G = val;
+            } else if (val > H && val < G) {
+                H = val;
+            }
+        }
+    }
+    return {G, H};
+}
+
+tuple<vector<int>, vector<int>, int> countMaxOccurrences(const vector<vector<int>>& a, int G) {
+    int n = a.size(), m = a[0].size(), totG = 0;
+    vector<int> row_cnt(n, 0), col_cnt(m, 0);
+
+    rep(i, 0, n) {
+        rep(j, 0, m) {
+            if (a[i][j] == G) {
+                row_cnt[i]++;
+                col_cnt[j]++;
+                totG++;
+            }
+        }
+    }
+    return {row_cnt, col_cnt, totG};
+}
+
+bool canCoverAllMax(const vector<vector<int>>& a, const vector<int>& row_cnt, const vector<int>& col_cnt, int G, int totG) {
+    int n = a.size(), m = a[0].size();
+
+    rep(r, 0, n) {
+        if (row_cnt[r] == 0) continue;
+        if (row_cnt[r] == totG) return true;
+
+        int c_count = 0;
+        rep(c, 0, m) {
+            int rem_in_c = col_cnt[c] - (a[r][c] == G ? 1 : 0);
+            if (rem_in_c > 0) {
+                c_count++;
+                if (c_count > 1) break;
+            }
+        }
+        if (c_count <= 1) return true;
+    }
+    return false;
+}
+
+void processTestcase() {
+    int n, m;
+    cin >> n >> m;
+    auto a = readMatrix(n, m);
+    auto [G, H] = findTopTwo(a);
+    auto [row_cnt, col_cnt, totG] = countMaxOccurrences(a, G);
+    bool cover = canCoverAllMax(a, row_cnt, col_cnt, G, totG);
+    int answer = cover ? max(G - 1, H) : G;
+    cout << answer << "\n";
+}
+
 //-------------------- Solve Function ------------------------//
 void solve() {
-    int t;
-    cin >> t;
-    while (t--) {
-        // Your code here
+    int T;
+    cin >> T;
+    while (T--) {
+        processTestcase();
     }
 }
 
@@ -124,5 +194,3 @@ signed main() {
     solve();
     return 0;
 }
-
-//------------------ End of Template -------------------------//

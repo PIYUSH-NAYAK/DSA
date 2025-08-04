@@ -114,6 +114,26 @@ void solve() {
     int t;
     cin >> t;
     while (t--) {
+        int n,s;
+        cin>>n>>s;
+        vi arr(n);
+        int mx=INT_MIN,mn=INT_MAX;
+        for (int i = 0; i < n; ++i) {
+            cin >> arr[i];
+            mx=max(mx,arr[i]);
+            mn=min(mn,arr[i]);
+        }
+        int add=mx-mn;
+        int f1=s-mn;
+        int f2=mx-s;
+        if(f1<0) f1=-f1;
+        if(f2<0) f2=-f2;
+        int res=min(f1,f2);
+       cout<<res+add<<endl;
+
+
+
+
         // Your code here
     }
 }

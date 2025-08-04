@@ -114,6 +114,25 @@ void solve() {
     int t;
     cin >> t;
     while (t--) {
+        int a,b,c,d;
+        cin >> a >> b >> c >> d;
+        int gel=min(a,c);
+        int fo=min(b,d);
+       
+        if(gel>fo) cout << "Gellyfish" << endl;
+        else if(gel<fo) cout << "Flower" << endl;
+        else {
+           cout<<"Gellyfish"<<endl;
+        }
+
+
+        // if(gel>fo) cout<<"Gellyfish"<<endl;
+        // else if(gel<fo) cout<<"Flower"<<endl;
+        // else{
+        //     if(gel1>flo1) cout<<"Gellyfish"<<endl;
+        //     else if(gel1<flo1) cout<<"Flower"<<endl;
+        //     else cout<<"Both"<<endl;
+        // }
         // Your code here
     }
 }

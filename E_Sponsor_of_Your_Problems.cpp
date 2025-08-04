@@ -37,6 +37,7 @@ using namespace std;
 
 //----------------------- Constants --------------------------//
 const int MOD = 1e9 + 7;
+static const int INF = 1e9;
 
 //--------------------- Utility Functions --------------------//
 template <typename T>
@@ -80,41 +81,86 @@ void printVec(const vi &ans) {
     cout << endl;
 }
 
-// Lambda Function for Prime Check
 auto isPrime = [](int n) {
     if (n <= 1) return false;
-    for (int i = 2; i * i <= n; ++i) {
+    for (int i = 2; i * i <= n; ++i)
         if (n % i == 0) return false;
-    }
     return true;
 };
 
 int powerOf2(int n) { 
-    if (n <= 0) return -1;  // Return -1 for non-positive numbers
-    int power = log2(n);    // log2(n) gives the exponent of the nearest power of 2
-    return power;
+    if (n <= 0) return -1;
+    return log2(n);
 }
 
 int highestDivisor(int n) {
-    if (n <= 1) return 0;  // No divisor for 1 or below
-    int maxDivisor = 1;
+    if (n <= 1) return 0;
+    int maxDiv = 1;
     for (int i = 1; i * i <= n; ++i) {
-        if (n % i == 0) {  // If i is a divisor
-            maxDivisor = std::max(maxDivisor, i);  // Update max divisor found
-            if (i != n / i && n / i < n) {  // Check the pair divisor
-                maxDivisor = std::max(maxDivisor, n / i);
+        if (n % i == 0) {
+            maxDiv = max(maxDiv, i);
+            if (i != n / i && n / i < n) {
+                maxDiv = max(maxDiv, n / i);
             }
         }
     }
-    return maxDivisor;
+    return maxDiv;
+}
+
+//-------------------- Problem Logic Functions ------------------------//
+
+int getMinCost(string &L, string &R) {
+    int n = L.size();
+    int dp[2][2], nxt[2][2];
+    
+    dp[0][0] = dp[0][1] = dp[1][0] = INF;
+    dp[1][1] = 0;
+
+    for (int i = 0; i < n; i++) {
+        int li = L[i] - '0';
+        int ri = R[i] - '0';
+
+        for (int a = 0; a < 2; a++)
+            for (int b = 0; b < 2; b++)
+                nxt[a][b] = INF;
+
+        for (int low = 0; low < 2; low++) {
+            for (int high = 0; high < 2; high++) {
+                int base = dp[low][high];
+                if (base == INF) continue;
+
+                for (int d = 0; d < 10; d++) {
+                    if (low && d < li) continue;
+                    if (high && d > ri) continue;
+
+                    int nlow = low && (d == li);
+                    int nhigh = high && (d == ri);
+                    int cost = (d == li) + (d == ri);
+
+                    nxt[nlow][nhigh] = min(nxt[nlow][nhigh], base + cost);
+                }
+            }
+        }
+
+        memcpy(dp, nxt, sizeof(dp));
+    }
+
+    int ans = INF;
+    for (int low = 0; low < 2; low++)
+        for (int high = 0; high < 2; high++)
+            ans = min(ans, dp[low][high]);
+
+    return ans;
 }
 
 //-------------------- Solve Function ------------------------//
 void solve() {
-    int t;
-    cin >> t;
-    while (t--) {
-        // Your code here
+    int T;
+    cin >> T;
+    while (T--) {
+        string L, R;
+        cin >> L >> R;
+        cout << getMinCost(L, R) << "\n";
     }
 }
 
@@ -124,5 +170,3 @@ signed main() {
     solve();
     return 0;
 }
-
-//------------------ End of Template -------------------------//
